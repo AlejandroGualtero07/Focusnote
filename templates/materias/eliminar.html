@@ -1,0 +1,47 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Eliminar Materia | FocusNote{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-trash"></i> Eliminar Materia</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning" role="alert">
+                    <strong>¿Estás seguro?</strong> Esta acción no se puede deshacer.
+                    {% if materia.notas.count > 0 %}
+                        <br><br>
+                        <strong>Advertencia:</strong> Esta materia tiene {{ materia.notas.count }} nota(s) asociada(s). 
+                        Las notas no se eliminarán, pero perderán su asociación con esta materia.
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <h5>
+                        <span class="badge bg-{{ materia.color }} me-2">{{ materia.get_color_display }}</span>
+                        {{ materia.nombre }}
+                    </h5>
+                    {% if materia.descripcion %}
+                        <p class="text-muted">{{ materia.descripcion }}</p>
+                    {% endif %}
+                    <small class="text-muted">
+                        Creada: {{ materia.fecha_creacion|date:"d/m/Y H:i" }}
+                    </small>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                        <a href="{% url 'materias:listar' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

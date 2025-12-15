@@ -1,0 +1,118 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Mis Tareas | FocusNote{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+        <h1 class="h2 mb-1"><i class="bi bi-check2-square"></i> Mis Tareas</h1>
+        <p class="text-muted mb-0">Gestiona tus entregas y exámenes por materia.</p>
+        <a href="{% url 'home' %}" class="btn btn-sm btn-outline-secondary mt-2">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+    <a href="{% url 'tareas:crear' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nueva Tarea
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card glass-card mb-3">
+    <div class="card-body d-flex flex-wrap align-items-center gap-2">
+        <span class="text-muted me-2">Filtrar por estado:</span>
+        <a href="{% url 'tareas:listar' %}" class="btn btn-sm {% if not estado_actual %}btn-primary{% else %}btn-outline-secondary{% endif %}">Todas</a>
+        <a href="{% url 'tareas:listar' %}?estado=P" class="btn btn-sm {% if estado_actual == 'P' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Pendientes</a>
+        <a href="{% url 'tareas:listar' %}?estado=E" class="btn btn-sm {% if estado_actual == 'E' %}btn-primary{% else %}btn-outline-secondary{% endif %}">En progreso</a>
+        <a href="{% url 'tareas:listar' %}?estado=T" class="btn btn-sm {% if estado_actual == 'T' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Terminadas</a>
+    </div>
+</div>
+
+{% if tareas %}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Tarea</th>
+                    <th>Materia</th>
+                    <th>Tipo</th>
+                    <th>Prioridad</th>
+                    <th>Estado</th>
+                    <th>Fecha límite</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarea in tareas %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ tarea.titulo }}</div>
+                            {% if tarea.descripcion %}
+                                <small class="text-muted d-block">{{ tarea.descripcion|truncatechars:80 }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ tarea.materia.color }}">{{ tarea.materia.nombre }}</span>
+                        </td>
+                        <td>
+                            {% if tarea.tipo == 'V' %}
+                                <span class="badge bg-secondary">Evidencia</span>
+                            {% elif tarea.tipo == 'W' %}
+                                <span class="badge bg-info text-dark">Trabajo</span>
+                            {% elif tarea.tipo == 'X' %}
+                                <span class="badge bg-danger">Examen</span>
+                            {% else %}
+                                <span class="badge bg-success">Estudio</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tarea.prioridad == 'A' %}
+                                <span class="badge bg-danger">Alta</span>
+                            {% elif tarea.prioridad == 'M' %}
+                                <span class="badge bg-warning text-dark">Media</span>
+                            {% else %}
+                                <span class="badge bg-success">Baja</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tarea.estado == 'P' %}
+                                <span class="badge bg-secondary">Pendiente</span>
+                            {% elif tarea.estado == 'E' %}
+                                <span class="badge bg-primary">En progreso</span>
+                            {% else %}
+                                <span class="badge bg-success">Terminada</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ tarea.fecha_limite|date:"d/m/Y" }}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'tareas:editar' tarea.pk %}" class="btn btn-outline-primary">Editar</a>
+                                <a href="{% url 'tareas:eliminar' tarea.pk %}" class="btn btn-outline-danger">Eliminar</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <h5>No tienes tareas registradas</h5>
+        <p class="mb-0">Crea tu primera tarea para empezar a organizar tus actividades.</p>
+        <a href="{% url 'tareas:crear' %}" class="btn btn-primary mt-3">Crear tarea</a>
+    </div>
+{% endif %}
+{% endblock %}
+
+
+
+

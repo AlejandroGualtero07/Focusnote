@@ -1,0 +1,237 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Mi Progreso | FocusNote{% endblock %}
+
+{% block extra_css %}
+<style>
+    .kpi-card h2 {
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+    .chart-card {
+        min-height: 320px;
+    }
+    @media (max-width: 768px) {
+        .chart-card {
+            min-height: 260px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h1 class="display-5 mb-1"><i class="bi bi-graph-up"></i> Mi Progreso</h1>
+            <p class="text-muted mb-0">Resumen de tu avance con tareas y sesiones Pomodoro.</p>
+        </div>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Tarjetas de estadísticas principales -->
+<div class="row g-4 mb-4">
+    <!-- Total de Tareas -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass-card shadow-sm border-0 h-100 kpi-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2">Tareas creadas</h6>
+                        <h2 class="mb-0">{{ total_tareas }}</h2>
+                    </div>
+                    <div class="display-4 text-primary"><i class="bi bi-check2-square"></i></div>
+                </div>
+                <small class="text-muted d-block mt-3">
+                    Gestión centralizada desde el módulo de Tareas.
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tareas Pendientes -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass-card shadow-sm border-0 h-100 kpi-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2">Tareas pendientes</h6>
+                        <h2 class="mb-0">{{ tareas_pendientes }}</h2>
+                    </div>
+                    <div class="display-4 text-warning"><i class="bi bi-clock"></i></div>
+                </div>
+                <small class="text-muted d-block mt-3">
+                    Incluye tareas con estado pendiente.
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tareas Terminadas -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass-card shadow-sm border-0 h-100 kpi-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2">Tareas terminadas</h6>
+                        <h2 class="mb-0">{{ tareas_terminadas }}</h2>
+                    </div>
+                    <div class="display-4 text-success"><i class="bi bi-flag-fill"></i></div>
+                </div>
+                <small class="text-muted d-block mt-3">
+                    Tareas marcadas como finalizadas.
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tiempo de estudio -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass-card shadow-sm border-0 h-100 kpi-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2">Tiempo de estudio</h6>
+                        <h2 class="mb-0">{{ total_estudio_minutos }} min</h2>
+                    </div>
+                    <div class="display-4 text-danger"><i class="bi bi-hourglass-split"></i></div>
+                </div>
+                <small class="text-muted d-block mt-3">
+                    {{ sesiones_estudio_completadas }} sesión{{ sesiones_estudio_completadas|pluralize }} completada{{ sesiones_estudio_completadas|pluralize }}.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficas -->
+<div class="row g-4">
+    <!-- Gráfico Tareas -->
+    <div class="col-lg-6">
+        <div class="card glass-card shadow-sm border-0 chart-card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clipboard-check"></i> Estado de tus tareas</h5>
+                <a href="{% url 'tareas:listar' %}" class="btn btn-sm btn-outline-primary">Ver tareas</a>
+            </div>
+            <div class="card-body">
+                {% if total_tareas > 0 %}
+                    <canvas id="tasksStatusChart" height="220"></canvas>
+                {% else %}
+                    <div class="alert alert-info mb-0">
+                        Aún no tienes tareas registradas. Crea tus primeras tareas para ver aquí tu progreso.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico Tiempo por Materia -->
+    <div class="col-lg-6">
+        <div class="card glass-card shadow-sm border-0 chart-card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-hourglass-split"></i> Tiempo de estudio por materia</h5>
+                <a href="{% url 'pomodoro:inicio' %}" class="btn btn-sm btn-outline-success">Ir a Pomodoro</a>
+            </div>
+            <div class="card-body">
+                {% if estudio_materias_labels %}
+                    <canvas id="focusBySubjectChart" height="220"></canvas>
+                {% else %}
+                    <div class="alert alert-info mb-0">
+                        Aún no has registrado sesiones Pomodoro con materia asociada. Usa el temporizador para empezar.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if total_tareas == 0 and not estudio_materias_labels %}
+<div class="alert alert-light border mt-4" role="alert">
+    <strong>Empieza a construir tu progreso.</strong> Registra tareas y utiliza el modo Pomodoro para ver cómo evoluciona tu enfoque aquí.
+</div>
+{% endif %}
+
+{{ tareas_chart|json_script:"tasks-chart-data" }}
+{{ estudio_materias_labels|json_script:"focus-labels-data" }}
+{{ estudio_materias_data|json_script:"focus-values-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+    if (typeof Chart === 'undefined') return;
+
+    const tasksDataElement = document.getElementById('tasks-chart-data');
+    const focusLabelsElement = document.getElementById('focus-labels-data');
+    const focusValuesElement = document.getElementById('focus-values-data');
+
+    // Donut de tareas
+    if (tasksDataElement) {
+        const tasksChartData = JSON.parse(tasksDataElement.textContent);
+        const ctxTasks = document.getElementById('tasksStatusChart');
+        if (ctxTasks && tasksChartData.data.some(v => v > 0)) {
+            new Chart(ctxTasks, {
+                type: 'doughnut',
+                data: {
+                    labels: tasksChartData.labels,
+                    datasets: [{
+                        data: tasksChartData.data,
+                        backgroundColor: ['#ffc107', '#0d6efd', '#198754'],
+                        borderWidth: 1,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                    },
+                    cutout: '60%',
+                },
+            });
+        }
+    }
+
+    // Barras de tiempo por materia
+    if (focusLabelsElement && focusValuesElement) {
+        const labels = JSON.parse(focusLabelsElement.textContent);
+        const values = JSON.parse(focusValuesElement.textContent);
+        const ctxFocus = document.getElementById('focusBySubjectChart');
+        if (ctxFocus && labels.length && values.some(v => v > 0)) {
+            new Chart(ctxFocus, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Minutos de estudio',
+                        data: values,
+                        backgroundColor: '#6f42c1',
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                            },
+                        },
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                    },
+                },
+            });
+        }
+    }
+})();
+</script>
+{% endblock %}

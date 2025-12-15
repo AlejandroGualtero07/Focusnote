@@ -1,0 +1,30 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Eliminar Tarea | FocusNote{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card glass-card shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Eliminar tarea</h4>
+            </div>
+            <div class="card-body">
+                <p>¿Seguro que deseas eliminar la tarea <strong>{{ tarea.titulo }}</strong>?</p>
+                <p class="text-muted mb-4">Esta acción no se puede deshacer.</p>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'tareas:listar' %}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

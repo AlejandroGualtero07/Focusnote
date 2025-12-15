@@ -1,0 +1,65 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}{{ materia.nombre }} | FocusNote{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2">
+            <span class="badge bg-{{ materia.color }} me-2">{{ materia.get_color_display }}</span>
+            {{ materia.nombre }}
+        </h1>
+        {% if materia.descripcion %}
+            <p class="text-muted mb-0">{{ materia.descripcion }}</p>
+        {% endif %}
+    </div>
+    <div class="btn-group">
+        <a href="{% url 'materias:editar' materia.pk %}" class="btn btn-outline-secondary">Editar</a>
+        <a href="{% url 'materias:eliminar' materia.pk %}" class="btn btn-outline-danger">Eliminar</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-{{ materia.color }} text-white">
+                <h5 class="mb-0"><i class="bi bi-stickies"></i> Notas asociadas ({{ notas.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if notas %}
+                    <div class="list-group">
+                        {% for nota in notas %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ nota.titulo }}</h6>
+                                <small>{{ nota.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <p class="mb-1 text-muted">
+                                {% if nota.contenido|length > 150 %}
+                                    {{ nota.contenido|slice:":150" }}...
+                                {% else %}
+                                    {{ nota.contenido }}
+                                {% endif %}
+                            </p>
+                            <div class="mt-2">
+                                <a href="{% url 'notas:editar' nota.pk %}" class="btn btn-sm btn-outline-primary">Editar nota</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        <p class="mb-0">No hay notas asociadas a esta materia aún.</p>
+                        <a href="{% url 'notas:crear' %}" class="btn btn-primary btn-sm mt-2">Crear primera nota</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{% url 'materias:listar' %}" class="btn btn-secondary">← Volver a materias</a>
+</div>
+{% endblock %}
+

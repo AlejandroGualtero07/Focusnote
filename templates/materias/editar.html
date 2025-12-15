@@ -1,0 +1,64 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Editar Materia | FocusNote{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card glass-card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Editar Materia</h4>
+            </div>
+            <div class="card-body">
+                <!-- Mensajes -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" 
+                               value="{{ materia.nombre }}" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" 
+                                  rows="4">{{ materia.descripcion|default:"" }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="color" class="form-label">Color</label>
+                        <select class="form-select" id="color" name="color">
+                            <option value="primary" {% if materia.color == 'primary' %}selected{% endif %}>Azul</option>
+                            <option value="success" {% if materia.color == 'success' %}selected{% endif %}>Verde</option>
+                            <option value="danger" {% if materia.color == 'danger' %}selected{% endif %}>Rojo</option>
+                            <option value="warning" {% if materia.color == 'warning' %}selected{% endif %}>Amarillo</option>
+                            <option value="info" {% if materia.color == 'info' %}selected{% endif %}>Cian</option>
+                            <option value="secondary" {% if materia.color == 'secondary' %}selected{% endif %}>Gris</option>
+                            <option value="dark" {% if materia.color == 'dark' %}selected{% endif %}>Negro</option>
+                            <option value="purple" {% if materia.color == 'purple' %}selected{% endif %}>Morado</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            Creada: {{ materia.fecha_creacion|date:"d/m/Y H:i" }} | 
+                            Notas asociadas: {{ materia.notas.count }}
+                        </small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning">Actualizar Materia</button>
+                        <a href="{% url 'materias:listar' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

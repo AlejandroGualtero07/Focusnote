@@ -1,0 +1,355 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Pomodoro | FocusNote{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pomodoro-shell {
+        max-width: 880px;
+        margin: 0 auto;
+    }
+    .pomodoro-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .pomodoro-header h1 {
+        margin: 0;
+    }
+    .pomodoro-panel {
+        border-radius: 18px;
+        border: 1px solid var(--border-soft);
+        background: var(--card-bg);
+        padding: 1.6rem 1.4rem 1.4rem;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+    }
+    .timer-display {
+        font-size: 3.5rem;
+        font-weight: 700;
+        text-align: center;
+        font-family: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .timer-display.study {
+        color: #dc3545;
+    }
+    .timer-display.break {
+        color: #198754;
+    }
+    .timer-status {
+        text-align: center;
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    .pomodoro-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-top: 1.25rem;
+    }
+    .pomodoro-controls .btn {
+        min-width: 130px;
+        font-weight: 600;
+    }
+    .pomodoro-meta {
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+    .selector-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    @media (max-width: 768px) {
+        .pomodoro-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .timer-display {
+            font-size: 2.6rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pomodoro-shell">
+    <div class="pomodoro-header">
+        <div>
+            <h1 class="h3 mb-1"><i class="bi bi-hourglass-split"></i> Pomodoro</h1>
+            <p class="text-muted mb-0">25 minutos de enfoque · 5 minutos de descanso</p>
+        </div>
+    </div>
+
+    <div class="pomodoro-panel">
+        <!-- Selectores de contexto -->
+        <div class="selector-row mb-3">
+            <div class="flex-grow-1">
+                <label class="form-label mb-1 small text-muted" for="materiaSelect">Materia</label>
+                <select id="materiaSelect" class="form-select form-select-sm">
+                    <option value="">Sin materia</option>
+                    {% for materia in materias %}
+                        <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex-grow-1">
+                <label class="form-label mb-1 small text-muted" for="tareaSelect">Tarea (opcional)</label>
+                <select id="tareaSelect" class="form-select form-select-sm">
+                    <option value="">Sin tarea</option>
+                    {% for tarea in tareas %}
+                        <option value="{{ tarea.id }}">{{ tarea.titulo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Estado -->
+        <div class="timer-status" id="statusText">Listo para comenzar una sesión de estudio</div>
+
+        <!-- Temporizador principal -->
+        <div class="text-center my-3">
+            <div class="timer-display study" id="timerDisplay">25:00</div>
+        </div>
+
+        <!-- Controles -->
+        <div class="pomodoro-controls">
+            <button id="startStudyBtn" type="button" class="btn btn-success">
+                ▶ Estudio (25:00)
+            </button>
+            <button id="startBreakBtn" type="button" class="btn btn-outline-success">
+                ☕ Descanso (5:00)
+            </button>
+            <button id="pauseResumeBtn" type="button" class="btn btn-warning" disabled>
+                ⏸ Pausar
+            </button>
+            <button id="stopBtn" type="button" class="btn btn-secondary" disabled>
+                ■ Detener
+            </button>
+        </div>
+
+        <div class="pomodoro-meta d-flex flex-wrap justify-content-between mt-3">
+            <span>Sesiones completadas hoy: <strong id="sessionsToday">0</strong></span>
+            <span>Minutos de enfoque hoy: <strong id="focusMinutesToday">0</strong></span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    // Duraciones (en segundos)
+    const STUDY_DURATION = 25 * 60;
+    const BREAK_DURATION = 5 * 60;
+
+    // Estado
+    let currentMode = 'E'; // 'E' estudio, 'D' descanso
+    let remaining = STUDY_DURATION;
+    let intervalId = null;
+    let running = false;
+    let sessionStart = null; // timestamp (ms)
+
+    // DOM
+    const timerEl = document.getElementById('timerDisplay');
+    const statusEl = document.getElementById('statusText');
+    const startStudyBtn = document.getElementById('startStudyBtn');
+    const startBreakBtn = document.getElementById('startBreakBtn');
+    const pauseResumeBtn = document.getElementById('pauseResumeBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const materiaSelect = document.getElementById('materiaSelect');
+    const tareaSelect = document.getElementById('tareaSelect');
+    const sessionsTodayEl = document.getElementById('sessionsToday');
+    const focusMinutesTodayEl = document.getElementById('focusMinutesToday');
+
+    function formatTime(sec) {
+        const m = Math.floor(sec / 60).toString().padStart(2, '0');
+        const s = (sec % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function updateDisplay() {
+        timerEl.textContent = formatTime(remaining);
+        timerEl.classList.toggle('study', currentMode === 'E');
+        timerEl.classList.toggle('break', currentMode === 'D');
+    }
+
+    function updateStatus() {
+        if (!running) {
+            statusEl.textContent = currentMode === 'E'
+                ? 'Listo para comenzar una sesión de estudio'
+                : 'Listo para comenzar un descanso';
+        } else {
+            statusEl.textContent = currentMode === 'E'
+                ? '🔥 Sesión de estudio en curso'
+                : '☕ Descanso en curso';
+        }
+    }
+
+    function updateButtons() {
+        startStudyBtn.disabled = running && currentMode === 'E';
+        startBreakBtn.disabled = running && currentMode === 'D';
+        pauseResumeBtn.disabled = !running;
+        stopBtn.disabled = !running;
+        pauseResumeBtn.textContent = running ? '⏸ Pausar' : '▶ Reanudar';
+    }
+
+    function tick() {
+        if (remaining > 0) {
+            remaining -= 1;
+            updateDisplay();
+            return;
+        }
+        // fin de sesión completa
+        clearInterval(intervalId);
+        intervalId = null;
+        running = false;
+        sendSession(true);
+        alert(currentMode === 'E'
+            ? '¡Sesión de estudio completada!'
+            : 'Descanso completado');
+        updateButtons();
+        updateStatus();
+    }
+
+    function start(mode) {
+        // Si cambiamos de modo, reiniciamos el tiempo
+        if (mode !== currentMode) {
+            currentMode = mode;
+            remaining = mode === 'E' ? STUDY_DURATION : BREAK_DURATION;
+        }
+        if (!running) {
+            running = true;
+            if (!sessionStart) {
+                sessionStart = Date.now();
+            }
+            intervalId = setInterval(tick, 1000);
+            updateButtons();
+            updateStatus();
+            updateDisplay();
+        }
+    }
+
+    function pauseOrResume() {
+        if (!running) {
+            // reanudar
+            running = true;
+            intervalId = setInterval(tick, 1000);
+        } else {
+            // pausar
+            running = false;
+            clearInterval(intervalId);
+            intervalId = null;
+        }
+        updateButtons();
+        updateStatus();
+    }
+
+    function stopSession() {
+        if (!sessionStart) return;
+        clearInterval(intervalId);
+        intervalId = null;
+        running = false;
+        sendSession(false);
+        // Reiniciar para siguiente sesión (manteniendo modo actual)
+        remaining = currentMode === 'E' ? STUDY_DURATION : BREAK_DURATION;
+        sessionStart = null;
+        updateButtons();
+        updateDisplay();
+        updateStatus();
+    }
+
+    function getCsrfToken() {
+        const name = 'csrftoken=';
+        const decodedCookie = decodeURIComponent(document.cookie || '');
+        const parts = decodedCookie.split(';');
+        for (let part of parts) {
+            part = part.trim();
+            if (part.startsWith(name)) {
+                return part.substring(name.length, part.length);
+            }
+        }
+        return '';
+    }
+
+    function sendSession(completed) {
+        if (!sessionStart) return;
+        const elapsedSeconds = Math.max(0, Math.floor((Date.now() - sessionStart) / 1000));
+        if (elapsedSeconds < 60) {
+            // ignorar sesiones menores a 1 minuto
+            sessionStart = null;
+            return;
+        }
+        const form = new FormData();
+        form.append('tipo_sesion', currentMode);
+        form.append('duracion_segundos', String(elapsedSeconds));
+        form.append('completada', completed ? 'true' : 'false');
+        form.append('fecha_inicio_iso', new Date(sessionStart).toISOString());
+        if (materiaSelect.value) form.append('materia_id', materiaSelect.value);
+        if (tareaSelect.value) form.append('tarea_id', tareaSelect.value);
+
+        fetch('{% url "pomodoro:registrar_sesion" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken(),
+            },
+            body: form,
+        }).then(resp => resp.json())
+          .then(data => {
+              if (!data.ok) {
+                  console.warn('Error al registrar sesión Pomodoro:', data.error);
+              } else {
+                  // Actualización local muy simple
+                  const mins = Math.floor(elapsedSeconds / 60);
+                  if (currentMode === 'E') {
+                      const currentFocus = parseInt(focusMinutesTodayEl.textContent || '0', 10) || 0;
+                      focusMinutesTodayEl.textContent = String(currentFocus + mins);
+                  }
+                  const currentSessions = parseInt(sessionsTodayEl.textContent || '0', 10) || 0;
+                  sessionsTodayEl.textContent = String(currentSessions + 1);
+              }
+          })
+          .catch(err => {
+              console.error('Error de red al registrar sesión Pomodoro:', err);
+          })
+          .finally(() => {
+              sessionStart = null;
+          });
+    }
+
+    // Eventos
+    startStudyBtn.addEventListener('click', () => {
+        currentMode = 'E';
+        remaining = STUDY_DURATION;
+        sessionStart = Date.now();
+        start('E');
+    });
+
+    startBreakBtn.addEventListener('click', () => {
+        currentMode = 'D';
+        remaining = BREAK_DURATION;
+        sessionStart = Date.now();
+        start('D');
+    });
+
+    pauseResumeBtn.addEventListener('click', pauseOrResume);
+    stopBtn.addEventListener('click', stopSession);
+
+    // Inicial
+    updateDisplay();
+    updateStatus();
+    updateButtons();
+})();
+</script>
+{% endblock %}
+
+
+
+
+

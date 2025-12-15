@@ -1,0 +1,769 @@
+/* ============================================
+   FOCUSNOTE - DARK MODE DEFINITIVO
+   Inspiración: Notion, Linear, Raycast
+   ============================================ */
+
+/* ============================================
+   VARIABLES CSS - DARK MODE GLOBAL
+   Paleta de colores elegante y profesional
+   ============================================ */
+:root {
+    /* Colores de fondo */
+    --bg-main: #0f1117;
+    --bg-secondary: #161925;
+    --bg-tertiary: #1e2330;
+    
+    /* Cards y componentes */
+    --card-bg: rgba(255, 255, 255, 0.06);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --card-shadow: rgba(0, 0, 0, 0.3);
+    
+    /* Colores de texto */
+    --text-main: #e6e6eb;
+    --text-muted: #a1a1b3;
+    --text-secondary: #8b8b9d;
+    
+    /* Acentos principales - Paleta elegante */
+    --accent-purple: #7c6cff;
+    --accent-purple-hover: #8d7eff;
+    --accent-green: #3ddc97;
+    --accent-green-hover: #4eecaa;
+    
+    /* Colores de estado - Profesionales y vibrantes */
+    --color-success: #10b981;
+    --color-success-hover: #059669;
+    --color-success-light: rgba(16, 185, 129, 0.15);
+    
+    --color-warning: #f59e0b;
+    --color-warning-hover: #d97706;
+    --color-warning-light: rgba(245, 158, 11, 0.15);
+    
+    --color-danger: #ef4444;
+    --color-danger-hover: #dc2626;
+    --color-danger-light: rgba(239, 68, 68, 0.15);
+    
+    --color-info: #06b6d4;
+    --color-info-hover: #0891b2;
+    --color-info-light: rgba(6, 182, 212, 0.15);
+    
+    /* Colores para materias - Vibrantes pero elegantes */
+    --color-materia-primary: #6366f1;
+    --color-materia-success: #10b981;
+    --color-materia-warning: #f59e0b;
+    --color-materia-danger: #ef4444;
+    --color-materia-info: #06b6d4;
+    --color-materia-secondary: #6b7280;
+    
+    /* Navbar y Footer */
+    --navbar-bg: rgba(15, 17, 23, 0.8);
+    --navbar-text: var(--text-main);
+    --footer-bg: rgba(15, 17, 23, 0.6);
+    --footer-text: var(--text-muted);
+    
+    /* Formularios */
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --input-border: var(--border-soft);
+    --input-text: var(--text-main);
+    --input-focus-border: var(--accent-purple);
+    --input-focus-shadow: rgba(124, 108, 255, 0.2);
+    
+    /* Alertas - Elegantes y discretas */
+    --alert-bg: var(--card-bg);
+    --alert-border: var(--border-soft);
+    --alert-success-bg: rgba(16, 185, 129, 0.1);
+    --alert-success-border: rgba(16, 185, 129, 0.3);
+    --alert-danger-bg: rgba(239, 68, 68, 0.1);
+    --alert-danger-border: rgba(239, 68, 68, 0.3);
+    --alert-warning-bg: rgba(245, 158, 11, 0.1);
+    --alert-warning-border: rgba(245, 158, 11, 0.3);
+    --alert-info-bg: rgba(6, 182, 212, 0.1);
+    --alert-info-border: rgba(6, 182, 212, 0.3);
+    
+    /* Links */
+    --link-color: var(--accent-purple);
+    --link-hover: var(--accent-purple-hover);
+}
+
+/* ============================================
+   ESTILOS GLOBALES
+   ============================================ */
+* {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    background-color: var(--bg-main) !important;
+    color: var(--text-main) !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+body > main {
+    flex: 1;
+}
+
+/* ============================================
+   GLASSMORPHISM ELEGANTE
+   ============================================ */
+.glass {
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 24px var(--card-shadow) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass:hover {
+    box-shadow: 0 8px 32px var(--card-shadow) !important;
+    transform: translateY(-2px);
+}
+
+/* Fallback para navegadores sin soporte */
+@supports not (backdrop-filter: blur(14px)) {
+    .glass {
+        background: rgba(22, 25, 37, 0.95) !important;
+        border: 1px solid var(--border-soft) !important;
+    }
+}
+
+/* Compatibilidad: glass-card también funciona */
+.glass-card {
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 18px !important;
+}
+
+/* ============================================
+   NAVBAR PREMIUM
+   ============================================ */
+.navbar-modern {
+    background: var(--navbar-bg) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border-soft) !important;
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03) !important;
+    padding: 0.75rem 0 !important;
+    min-height: 64px !important;
+}
+
+.navbar-modern .navbar-brand {
+    color: var(--navbar-text) !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0 !important;
+    transition: transform 0.2s ease;
+}
+
+.navbar-modern .navbar-brand:hover {
+    transform: scale(1.02);
+    color: var(--navbar-text) !important;
+}
+
+.navbar-modern .brand-icon {
+    font-size: 1.5rem;
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+}
+
+.navbar-modern .brand-text {
+    background: linear-gradient(135deg, var(--accent-purple) 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.navbar-modern .navbar-text-user {
+    color: var(--navbar-text) !important;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* ============================================
+   AVATAR EN NAVBAR - OCULTADO COMPLETAMENTE
+   ============================================ */
+nav.navbar-modern .navbar-avatar-link,
+.navbar-modern a.navbar-avatar-link,
+.navbar-nav .navbar-avatar-link {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+nav.navbar-modern .navbar-avatar-link:hover,
+.navbar-modern a.navbar-avatar-link:hover {
+    display: none !important;
+}
+
+nav.navbar-modern .navbar-avatar-link img,
+nav.navbar-modern .navbar-avatar-link .navbar-avatar-placeholder,
+.navbar-modern .navbar-avatar-link img,
+.navbar-modern .navbar-avatar-link .navbar-avatar-placeholder {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+nav.navbar-modern .navbar-avatar,
+.navbar-modern .navbar-avatar,
+.navbar-nav .navbar-avatar {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+nav.navbar-modern .navbar-avatar-placeholder,
+.navbar-modern .navbar-avatar-placeholder,
+.navbar-nav .navbar-avatar-placeholder {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.navbar-modern .btn-navbar {
+    background: rgba(124, 108, 255, 0.1) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(124, 108, 255, 0.2) !important;
+    color: var(--accent-purple) !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    border-radius: 10px !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.navbar-modern .btn-navbar:hover {
+    background: rgba(124, 108, 255, 0.2) !important;
+    border-color: rgba(124, 108, 255, 0.3) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(124, 108, 255, 0.2);
+    color: var(--accent-purple) !important;
+}
+
+/* ============================================
+   FOOTER MINIMALISTA
+   ============================================ */
+.footer-modern {
+    background: var(--footer-bg) !important;
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border-top: 1px solid var(--border-soft) !important;
+    padding: 1.5rem 0 !important;
+    margin-top: auto;
+}
+
+.footer-modern .footer-text {
+    color: var(--footer-text) !important;
+    font-size: 0.75rem !important;
+    opacity: 0.7;
+    letter-spacing: 0.3px;
+    font-weight: 400;
+}
+
+/* ============================================
+   CARDS Y COMPONENTES
+   ============================================ */
+.card,
+.glass-card {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 16px !important;
+    color: var(--text-main) !important;
+    box-shadow: 0 4px 24px var(--card-shadow) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+}
+
+.card:hover,
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px var(--card-shadow) !important;
+}
+
+.card-header {
+    background: transparent !important;
+    border-bottom: 1px solid var(--border-soft) !important;
+    color: var(--text-main) !important;
+    padding: 1.25rem 1.5rem !important;
+}
+
+.card-body {
+    color: var(--text-main) !important;
+    padding: 1.5rem !important;
+}
+
+/* ============================================
+   BOTONES MODERNOS
+   ============================================ */
+.btn {
+    border-radius: 10px !important;
+    font-weight: 500 !important;
+    padding: 0.625rem 1.25rem !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: var(--accent-purple) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(124, 108, 255, 0.3) !important;
+}
+
+.btn-primary:hover {
+    background: var(--accent-purple-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 108, 255, 0.4) !important;
+}
+
+.btn-success {
+    background: var(--color-success) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-success:hover {
+    background: var(--color-success-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
+}
+
+.btn-danger {
+    background: var(--color-danger) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+}
+
+.btn-danger:hover {
+    background: var(--color-danger-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
+}
+
+.btn-warning {
+    background: var(--color-warning) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3) !important;
+}
+
+.btn-warning:hover {
+    background: var(--color-warning-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4) !important;
+}
+
+.btn-info {
+    background: var(--color-info) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3) !important;
+}
+
+.btn-info:hover {
+    background: var(--color-info-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4) !important;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-soft) !important;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-warning,
+.btn-outline-info,
+.btn-outline-secondary {
+    background: transparent !important;
+    border: 1.5px solid currentColor !important;
+}
+
+.btn-outline-primary {
+    color: var(--accent-purple) !important;
+    border-color: var(--accent-purple) !important;
+}
+
+.btn-outline-primary:hover {
+    background: var(--accent-purple) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 108, 255, 0.3);
+}
+
+.btn-outline-success {
+    color: var(--accent-green) !important;
+    border-color: var(--accent-green) !important;
+}
+
+.btn-outline-success:hover {
+    background: var(--accent-green) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(61, 220, 151, 0.3);
+}
+
+.btn:active {
+    transform: scale(0.98) !important;
+}
+
+/* ============================================
+   FORMULARIOS ELEGANTES
+   ============================================ */
+.form-control,
+.form-select {
+    background: var(--input-bg) !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 10px !important;
+    color: var(--input-text) !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.2s ease !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background: var(--input-bg) !important;
+    border-color: var(--input-focus-border) !important;
+    color: var(--input-text) !important;
+    box-shadow: 0 0 0 3px var(--input-focus-shadow) !important;
+    outline: none !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.5;
+}
+
+.form-label {
+    color: var(--text-main) !important;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   ALERTAS Y MENSAJES - Elegantes y discretas
+   Ocultar alertas tradicionales cuando se usa toast
+   ============================================ */
+.alert {
+    display: none !important; /* Ocultar alertas tradicionales, usar toast en su lugar */
+}
+.alert.show-alert {
+    display: block !important; /* Mostrar solo si se necesita explícitamente */
+}
+
+.alert-success {
+    background: var(--alert-success-bg) !important;
+    border-color: var(--alert-success-border) !important;
+    border-left-color: var(--color-success) !important;
+    color: var(--color-success) !important;
+}
+
+.alert-danger {
+    background: var(--alert-danger-bg) !important;
+    border-color: var(--alert-danger-border) !important;
+    border-left-color: var(--color-danger) !important;
+    color: var(--color-danger) !important;
+}
+
+.alert-warning {
+    background: var(--alert-warning-bg) !important;
+    border-color: var(--alert-warning-border) !important;
+    border-left-color: var(--color-warning) !important;
+    color: var(--color-warning) !important;
+}
+
+.alert-info {
+    background: var(--alert-info-bg) !important;
+    border-color: var(--alert-info-border) !important;
+    border-left-color: var(--color-info) !important;
+    color: var(--color-info) !important;
+}
+
+.alert .btn-close {
+    opacity: 0.6;
+    filter: brightness(0) invert(1);
+}
+
+.alert .btn-close:hover {
+    opacity: 1;
+}
+
+/* ============================================
+   LINKS Y NAVEGACIÓN
+   ============================================ */
+a {
+    color: var(--link-color) !important;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--link-hover) !important;
+}
+
+/* ============================================
+   LISTAS Y COMPONENTES
+   ============================================ */
+.list-group-item {
+    background: var(--card-bg) !important;
+    border-color: var(--border-soft) !important;
+    color: var(--text-main) !important;
+    border-radius: 10px !important;
+    margin-bottom: 0.5rem;
+}
+
+.list-group-item-action:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    transform: translateX(4px);
+}
+
+.badge {
+    border-radius: 6px !important;
+    font-weight: 500;
+    padding: 0.35rem 0.65rem !important;
+}
+
+.progress {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 10px !important;
+    height: 8px !important;
+}
+
+.progress-bar {
+    border-radius: 10px !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* ============================================
+   ANIMACIONES SUAVES
+   ============================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+body {
+    animation: fadeIn 0.4s ease-out;
+}
+
+main {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.card,
+.glass-card,
+.glass {
+    animation: fadeInScale 0.4s ease-out;
+    animation-fill-mode: both;
+}
+
+.card:nth-child(1),
+.glass-card:nth-child(1),
+.glass:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.card:nth-child(2),
+.glass-card:nth-child(2),
+.glass:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.card:nth-child(3),
+.glass-card:nth-child(3),
+.glass:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.card:nth-child(4),
+.glass-card:nth-child(4),
+.glass:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+/* Optimización GPU */
+.card,
+.glass-card,
+.glass,
+.btn {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    will-change: transform;
+}
+
+/* Reducir animaciones si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ============================================
+   ICONOS BOOTSTRAP - Estilo uniforme
+   ============================================ */
+.bi {
+    font-size: inherit;
+    vertical-align: -0.125em;
+}
+
+/* Iconos en títulos */
+h1 .bi, h2 .bi, h3 .bi, h4 .bi, h5 .bi {
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+/* Iconos en botones */
+.btn .bi {
+    margin-right: 0.25rem;
+}
+
+.btn-sm .bi {
+    font-size: 0.875rem;
+}
+
+/* ============================================
+   TOAST/SNACKBAR - Alertas avanzadas
+   ============================================ */
+.toast {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.toast-body {
+    color: var(--text-main) !important;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    padding: 1rem !important;
+}
+
+.toast.bg-success {
+    background: var(--alert-success-bg) !important;
+    border-color: var(--alert-success-border) !important;
+    border-left: 3px solid var(--color-success) !important;
+}
+
+.toast.bg-danger {
+    background: var(--alert-danger-bg) !important;
+    border-color: var(--alert-danger-border) !important;
+    border-left: 3px solid var(--color-danger) !important;
+}
+
+.toast.bg-warning {
+    background: var(--alert-warning-bg) !important;
+    border-color: var(--alert-warning-border) !important;
+    border-left: 3px solid var(--color-warning) !important;
+}
+
+.toast.bg-info {
+    background: var(--alert-info-bg) !important;
+    border-color: var(--alert-info-border) !important;
+    border-left: 3px solid var(--color-info) !important;
+}
+
+.toast .bi {
+    font-size: 1.2rem;
+}
+
+.toast .btn-close {
+    opacity: 0.7;
+    filter: brightness(0) invert(1);
+}
+
+.toast .btn-close:hover {
+    opacity: 1;
+}
+
+/* Animación de entrada */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast.show {
+    animation: slideInRight 0.3s ease-out;
+}
+
+/* ============================================
+   OVERRIDES DE BOOTSTRAP
+   ============================================ */
+.bg-light {
+    background-color: var(--bg-main) !important;
+}
+
+.bg-white {
+    background-color: var(--card-bg) !important;
+}

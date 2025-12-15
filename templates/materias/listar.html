@@ -1,0 +1,78 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Mis Materias | FocusNote{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+        <h1 class="h2 mb-1"><i class="bi bi-journal-bookmark"></i> Mis Materias</h1>
+        <a href="{% url 'home' %}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+    <a href="{% url 'materias:crear' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nueva Materia
+    </a>
+</div>
+
+<!-- Mensajes -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Lista de materias -->
+{% if materias %}
+    <div class="row g-4">
+        {% for materia in materias %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card glass-card h-100 shadow-sm border-{{ materia.color }}" style="border-width: 3px;">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ materia.nombre }}</h5>
+                        <span class="badge bg-{{ materia.color }}">{{ materia.get_color_display }}</span>
+                    </div>
+                    {% if materia.descripcion %}
+                        <p class="card-text text-muted flex-grow-1">
+                            {{ materia.descripcion|truncatewords:20 }}
+                        </p>
+                    {% else %}
+                        <p class="card-text text-muted flex-grow-1">
+                            <em>Sin descripción</em>
+                        </p>
+                    {% endif %}
+                    <div class="mt-auto">
+                        <small class="text-muted d-block mb-2">
+                            Notas: {{ materia.notas.count }} | 
+                            Creada: {{ materia.fecha_creacion|date:"d/m/Y" }}
+                        </small>
+                        <div class="btn-group w-100" role="group">
+                            <a href="{% url 'materias:detalle' materia.pk %}" class="btn btn-sm btn-{{ materia.color }}">
+                                Ver
+                            </a>
+                            <a href="{% url 'materias:editar' materia.pk %}" class="btn btn-sm btn-outline-secondary">
+                                Editar
+                            </a>
+                            <a href="{% url 'materias:eliminar' materia.pk %}" class="btn btn-sm btn-outline-danger">
+                                Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <h5>No tienes materias aún</h5>
+        <p class="mb-0">Comienza creando tu primera materia para organizar tus notas.</p>
+        <a href="{% url 'materias:crear' %}" class="btn btn-primary mt-3">Crear mi primera materia</a>
+    </div>
+{% endif %}
+{% endblock %}
+

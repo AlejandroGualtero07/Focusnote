@@ -1,0 +1,100 @@
+{% extends "layout/base.html" %}
+
+{% block title %}Dashboard | FocusNote{% endblock %}
+
+{% block content %}
+<!-- Saludo personalizado -->
+<div class="text-center mb-5">
+    <h1 class="display-4 fw-bold">¡Hola, {{ user.username }}! <i class="bi bi-hand-thumbs-up"></i></h1>
+    <p class="lead text-muted">
+        Organiza tus ideas, mejora tu enfoque y aumenta tu productividad.
+    </p>
+</div>
+
+<!-- Tarjetas de módulos -->
+<div class="row g-4">
+    <!-- Tarjeta: Notas -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass h-100 shadow-sm border-0">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-3">
+                    <i class="bi bi-stickies" style="font-size: 3.5rem; color: var(--accent-purple);"></i>
+                </div>
+                <h5 class="card-title fw-bold">Notas</h5>
+                <p class="card-text text-muted flex-grow-1">
+                    Crea y organiza tus notas de estudio de manera eficiente.
+                </p>
+                <a href="{% url 'notas:listar' %}" class="btn btn-primary mt-auto">
+                    Ver Notas
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta: Materias -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass h-100 shadow-sm border-0">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-3">
+                    <i class="bi bi-journal-bookmark" style="font-size: 3.5rem; color: var(--color-success);"></i>
+                </div>
+                <h5 class="card-title fw-bold">Materias</h5>
+                <p class="card-text text-muted flex-grow-1">
+                    Gestiona tus materias y organiza tu plan de estudios.
+                </p>
+                <a href="{% url 'materias:listar' %}" class="btn btn-success mt-auto">
+                    Ver Materias
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta: Pomodoro -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass h-100 shadow-sm border-0">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-3">
+                    <i class="bi bi-hourglass-split" style="font-size: 3.5rem; color: var(--color-danger);"></i>
+                </div>
+                <h5 class="card-title fw-bold">Pomodoro</h5>
+                <p class="card-text text-muted flex-grow-1">
+                    Técnica Pomodoro para mejorar tu concentración y productividad.
+                </p>
+                <a href="{% url 'pomodoro:inicio' %}" class="btn btn-danger mt-auto">
+                    Iniciar Pomodoro
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta: Progreso -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass h-100 shadow-sm border-0">
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-3">
+                    <i class="bi bi-graph-up" style="font-size: 3.5rem; color: var(--color-info);"></i>
+                </div>
+                <h5 class="card-title fw-bold">Progreso</h5>
+                <p class="card-text text-muted flex-grow-1">
+                    Visualiza tu progreso y estadísticas de estudio.
+                </p>
+                <a href="{% url 'progreso:dashboard' %}" class="btn btn-info mt-auto">
+                    Ver Progreso
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mensajes de bienvenida (si existen) -->
+{% if messages %}
+    <div class="mt-4">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}
