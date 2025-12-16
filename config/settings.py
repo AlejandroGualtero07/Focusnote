@@ -24,14 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-#sg&i%45j^ksee*w37d)*3c_82gbtf%owle5#r=edm_1!$)8ib')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() == 'true'
+DEBUG = True  # Temporalmente forzado a True para diagnosticar error 500
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
-# Add Render domain if available
-render_url = os.environ.get('RENDER_EXTERNAL_URL')
-if render_url:
-    ALLOWED_HOSTS.append(render_url.replace('https://', '').replace('http://', ''))
+ALLOWED_HOSTS = ['*']  # Temporalmente abierto para diagnosticar
 
 
 # Application definition
